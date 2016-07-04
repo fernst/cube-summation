@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', ['uses' => 'CubeSummationController@index', 'as' => 'cube-summation.index']);
+
+Route::post('/', ['uses' => 'CubeSummationController@process', 'as' => 'cube-summation.process']);

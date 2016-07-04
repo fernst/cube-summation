@@ -41,19 +41,23 @@ class InstructionHandler
      *
      * @param $instructions
      */
-    public Function processInput($instructions) {
+    public Function processInput($instructions)
+    {
         $lines = $this->getLines($instructions);
 
-        $numberOfTestCases = $this->getNumberOfTestCases(array_shift($lines));
+        $lineNumber = 1;
+
+        $numberOfTestCases = $this->getNumberOfTestCases(array_shift($lines), $lineNumber++);
 
         $dataMatrix = new DataMatrix();
 
-        while ($numberOfTestCases>0) {
+        while ($numberOfTestCases > 0) {
             $numberOfInstructions =
-                $this->getSizeAndNumberOfInstructions(array_shift($lines), $dataMatrix);
+                $this->getSizeAndNumberOfInstructions(array_shift($lines), $dataMatrix,
+                    $lineNumber++);
 
-            while ($numberOfInstructions>0) {
-                $value = $this->processInstruction(array_shift($lines), $dataMatrix);
+            while ($numberOfInstructions > 0) {
+                $value = $this->processInstruction(array_shift($lines), $dataMatrix, $lineNumber++);
 
                 if ($value !== null) {
                     $this->output[] = $value;
@@ -72,7 +76,8 @@ class InstructionHandler
      * @param $input
      * @return array
      */
-    protected function getLines($input) {
+    protected function getLines($input)
+    {
         return preg_split("/\r\n|\n|\r/", trim($input));
     }
 
@@ -80,17 +85,19 @@ class InstructionHandler
      * Get the number of test cases to be executed
      *
      * @param $line
+     * @param $lineNumber
      * @return int
      */
-    protected function getNumberOfTestCases($line) {
+    protected function getNumberOfTestCases($line, $lineNumber)
+    {
         if ($line == null || $line === "") {
-            throw new InstructionParseException();
+            throw new InstructionParseException($lineNumber);
         }
 
         $numberOfTestCases = 0;
 
         if (sscanf($line, "%d", $numberOfTestCases) !== 1) {
-            throw new InstructionParseException();
+            throw new InstructionParseException($lineNumber);
         }
 
         return $numberOfTestCases;
@@ -100,19 +107,21 @@ class InstructionHandler
      * Get the size of the matrix and number of instructions to read
      *
      * @param $line
-     * @param $dataMatrix
+     * @param DataMatrix $dataMatrix
+     * @param $lineNumber
      * @return int
      */
-    protected function getSizeAndNumberOfInstructions($line, DataMatrix $dataMatrix) {
+    protected function getSizeAndNumberOfInstructions($line, DataMatrix $dataMatrix, $lineNumber)
+    {
         if ($line == null || $line === "") {
-            throw new InstructionParseException();
+            throw new InstructionParseException($lineNumber);
         }
 
         $size = 0;
         $numberOfInstructions = 0;
-        
+
         if (sscanf($line, "%d %d", $size, $numberOfInstructions) !== 2) {
-            throw new InstructionParseException();
+            throw new InstructionParseException($lineNumber);
         }
 
         $dataMatrix->create($size);
@@ -125,21 +134,23 @@ class InstructionHandler
      *
      * @param $line
      * @param DataMatrix $dataMatrix
+     * @param $lineNumber
      * @return int|null
      */
-    protected function processInstruction($line, DataMatrix $dataMatrix) {
+    protected function processInstruction($line, DataMatrix $dataMatrix, $lineNumber)
+    {
         if ($line == null || $line === "") {
-            throw new InstructionParseException();
+            throw new InstructionParseException($lineNumber);
         }
 
         $val = null;
 
         if (str_contains($line, 'UPDATE')) {
-            $this->processUpdate($line, $dataMatrix);
-        } else if (str_contains($line, 'QUERY') ) {
-            $val = $this->processQuery($line, $dataMatrix);
+            $this->processUpdate($line, $dataMatrix, $lineNumber);
+        } else if (str_contains($line, 'QUERY')) {
+            $val = $this->processQuery($line, $dataMatrix, $lineNumber);
         } else {
-            throw new InstructionParseException();
+            throw new InstructionParseException($lineNumber);
         }
 
         return $val;
@@ -150,18 +161,20 @@ class InstructionHandler
      *
      * @param $line
      * @param DataMatrix $dataMatrix
+     * @param $lineNumber
      */
-    protected function processUpdate($line, DataMatrix $dataMatrix) {
+    protected function processUpdate($line, DataMatrix $dataMatrix, $lineNumber)
+    {
         $x = 0;
         $y = 0;
         $z = 0;
         $value = 0;
 
         if (sscanf($line, "UPDATE %d %d %d %d", $x, $y, $z, $value) !== 4) {
-            throw new InstructionParseException();
+            throw new InstructionParseException($lineNumber);
         }
 
-        $dataMatrix->update($x, $y, $z, $value);
+        $dataMatrix->update($x, $y, $z, $value, $lineNumber);
     }
 
     /**
@@ -169,9 +182,11 @@ class InstructionHandler
      *
      * @param $line
      * @param DataMatrix $dataMatrix
+     * @param $lineNumber
      * @return int
      */
-    protected function processQuery($line, DataMatrix $dataMatrix) {
+    protected function processQuery($line, DataMatrix $dataMatrix, $lineNumber)
+    {
         $x1 = 0;
         $y1 = 0;
         $z1 = 0;
@@ -180,9 +195,9 @@ class InstructionHandler
         $z2 = 0;
 
         if (sscanf($line, "QUERY %d %d %d %d %d %d", $x1, $y1, $z1, $x2, $y2, $z2) !== 6) {
-            throw new InstructionParseException();
+            throw new InstructionParseException($lineNumber);
         }
 
-        return $dataMatrix->query($x1, $y1, $z1, $x2, $y2, $z2);
+        return $dataMatrix->query($x1, $y1, $z1, $x2, $y2, $z2, $lineNumber);
     }
 }

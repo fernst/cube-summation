@@ -30,12 +30,13 @@ class DataMatrix{
      * @param $y
      * @param $z
      * @param $value
+     * @param null $lineNumber
      * @return mixed
      */
-    public function update($x, $y, $z, $value) {
+    public function update($x, $y, $z, $value, $lineNumber = null) {
         if ($x < 1 || $y < 1 || $z < 1 || 
             $x > $this->size || $y > $this->size || $z > $this->size) {
-            throw new InvalidInstructionException();
+            throw new InvalidInstructionException($lineNumber);
         }
 
         //Set the cell value
@@ -53,9 +54,10 @@ class DataMatrix{
      * @param $x2
      * @param $y2
      * @param $z2
+     * @param null $lineNumber
      * @return int
      */
-    public function query($x1, $y1, $z1, $x2, $y2, $z2) {
+    public function query($x1, $y1, $z1, $x2, $y2, $z2, $lineNumber = null) {
         //bound checking for parameters
         if (
             $x1 < 1 || $y1 < 1 || $z1 < 1 || $x2 < 1 || $y2 < 1 || $z2 < 1 ||
@@ -63,7 +65,7 @@ class DataMatrix{
             $x2 > $this->size || $y2 > $this->size || $z2 > $this->size ||
             $x1 > $x2 || $y1 > $y2 || $z1 > $z2
         ) {
-            throw new InvalidInstructionException();
+            throw new InvalidInstructionException($lineNumber);
         }
 
         $sum = 0;
