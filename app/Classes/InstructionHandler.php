@@ -11,6 +11,7 @@ use App\Exceptions\InstructionParseException;
 class InstructionHandler
 {
     private $output;
+    private $dataMatrix;
 
     /**
      * InstructionHandler constructor.
@@ -18,6 +19,7 @@ class InstructionHandler
     public function __construct()
     {
         $this->output = array();
+        $this->dataMatrix = new DataMatrix();
     }
 
     /**
@@ -49,19 +51,14 @@ class InstructionHandler
 
         $numberOfTestCases = $this->getNumberOfTestCases(array_shift($lines), $lineNumber++);
 
-        $dataMatrix = new DataMatrix();
-
         while ($numberOfTestCases > 0) {
             $numberOfInstructions =
-                $this->getSizeAndNumberOfInstructions(array_shift($lines), $dataMatrix,
+                $this->getSizeAndNumberOfInstructions(array_shift($lines),
                     $lineNumber++);
 
             while ($numberOfInstructions > 0) {
-                $value = $this->processInstruction(array_shift($lines), $dataMatrix, $lineNumber++);
-
-                if ($value !== null) {
-                    $this->output[] = $value;
-                }
+                $this->processInstruction(array_shift($lines),
+                    $lineNumber++);
 
                 $numberOfInstructions--;
             }
@@ -107,11 +104,11 @@ class InstructionHandler
      * Get the size of the matrix and number of instructions to read
      *
      * @param $line
-     * @param DataMatrix $dataMatrix
      * @param $lineNumber
      * @return int
+     * @internal param DataMatrix $dataMatrix
      */
-    protected function getSizeAndNumberOfInstructions($line, DataMatrix $dataMatrix, $lineNumber)
+    protected function getSizeAndNumberOfInstructions($line, $lineNumber)
     {
         if ($line == null || $line === "") {
             throw new InstructionParseException($lineNumber);
@@ -124,7 +121,7 @@ class InstructionHandler
             throw new InstructionParseException($lineNumber);
         }
 
-        $dataMatrix->create($size);
+        $this->dataMatrix->create($size);
 
         return $numberOfInstructions;
     }
@@ -133,37 +130,30 @@ class InstructionHandler
      * Process instruction lines
      *
      * @param $line
-     * @param DataMatrix $dataMatrix
      * @param $lineNumber
      * @return int|null
+     * @internal param $output
+     * @internal param DataMatrix $dataMatrix
      */
-    protected function processInstruction($line, DataMatrix $dataMatrix, $lineNumber)
+    protected function processInstruction($line, $lineNumber)
     {
-        if ($line == null || $line === "") {
-            throw new InstructionParseException($lineNumber);
-        }
-
-        $val = null;
-
         if (str_contains($line, 'UPDATE')) {
-            $this->processUpdate($line, $dataMatrix, $lineNumber);
+            $this->processUpdate($line, $lineNumber);
         } else if (str_contains($line, 'QUERY')) {
-            $val = $this->processQuery($line, $dataMatrix, $lineNumber);
+            $this->output[] = $this->processQuery($line, $lineNumber);
         } else {
             throw new InstructionParseException($lineNumber);
         }
-
-        return $val;
     }
 
     /**
      * Process update instructions
      *
      * @param $line
-     * @param DataMatrix $dataMatrix
      * @param $lineNumber
+     * @internal param DataMatrix $dataMatrix
      */
-    protected function processUpdate($line, DataMatrix $dataMatrix, $lineNumber)
+    protected function processUpdate($line, $lineNumber)
     {
         $x = 0;
         $y = 0;
@@ -174,18 +164,18 @@ class InstructionHandler
             throw new InstructionParseException($lineNumber);
         }
 
-        $dataMatrix->update($x, $y, $z, $value, $lineNumber);
+        $this->dataMatrix->update($x, $y, $z, $value, $lineNumber);
     }
 
     /**
      * Process query instructions
      *
      * @param $line
-     * @param DataMatrix $dataMatrix
      * @param $lineNumber
      * @return int
+     * @internal param DataMatrix $dataMatrix
      */
-    protected function processQuery($line, DataMatrix $dataMatrix, $lineNumber)
+    protected function processQuery($line, $lineNumber)
     {
         $x1 = 0;
         $y1 = 0;
@@ -198,6 +188,6 @@ class InstructionHandler
             throw new InstructionParseException($lineNumber);
         }
 
-        return $dataMatrix->query($x1, $y1, $z1, $x2, $y2, $z2, $lineNumber);
+        return $this->dataMatrix->query($x1, $y1, $z1, $x2, $y2, $z2, $lineNumber);
     }
 }
