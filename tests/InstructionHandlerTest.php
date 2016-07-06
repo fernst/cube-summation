@@ -8,7 +8,7 @@
  */
 class InstructionHandlerTest extends TestCase
 {
-    static $validTestCase = <<<TEXT
+    const VALID_TEST_CASE = <<<TEXT
 2
 4 5
 UPDATE 2 2 2 4
@@ -23,7 +23,7 @@ QUERY 1 1 1 2 2 2
 QUERY 2 2 2 2 2 2
 TEXT;
 
-    static $validTestResult = <<<TEXT
+    const VALID_TEST_RESULT = <<<TEXT
 4
 4
 27
@@ -32,42 +32,42 @@ TEXT;
 1
 TEXT;
 
-    static $invalidQuery = <<<TEXT
+    const INVALID_QUERY = <<<TEXT
 2
 4 2
 UPDATE 2 2 2 4
 QUERY 1 1 1 3 3 5
 TEXT;
 
-    static $invalidUpdate = <<<TEXT
+    const INVALID_UPDATE = <<<TEXT
 1
 4 2
 UPDATE 2 2 5 4
 QUERY 1 1 1 3 3 3
 TEXT;
 
-    static $invalidQueryFormat = <<<TEXT
+    const INVALID_QUERY_FORMAT = <<<TEXT
 2
 4 2
 UPDATE 2 2 2 4
 QUERY 1 1 1 3 3
 TEXT;
 
-    static $invalidUpdateFormat = <<<TEXT
+    const INVALID_UPDATE_FORMAT = <<<TEXT
 1
 4 2
 UPDATE 2 2 5
 QUERY 1 1 1 3 3 3
 TEXT;
 
-    static $invalidNumberOfTestCases = <<<TEXT
+    const INVALID_NUMBER_OF_TEST_CASES = <<<TEXT
 2
 4 2
 UPDATE 2 2 2 4
 QUERY 1 1 1 3 3 3
 TEXT;
 
-    static $invalidNumberOfTestInstructions1 = <<<TEXT
+    const INVALID_NUMBER_OF_TEST_INSTRUCTIONS_1 = <<<TEXT
 2
 4 3
 UPDATE 2 2 2 4
@@ -77,7 +77,7 @@ UPDATE 2 2 2 4
 QUERY 1 1 1 3 3 3
 TEXT;
 
-    static $invalidNumberOfTestInstructions2 = <<<TEXT
+    const INVALID_NUMBER_OF_TEST_INSTRUCTIONS_2 = <<<TEXT
 2
 4 1
 UPDATE 2 2 2 4
@@ -91,10 +91,10 @@ TEXT;
     {
         $instructionHandler = new \App\Classes\InstructionHandler();
 
-        $instructionHandler->processInput(self::$validTestCase);
+        $instructionHandler->processInput(self::VALID_TEST_CASE);
 
         $this->assertEquals(array(4, 4, 27, 0, 1, 1), $instructionHandler->getOutputAsArray());
-        $this->assertEquals(trim(self::$validTestResult),
+        $this->assertEquals(trim(self::VALID_TEST_RESULT),
             trim($instructionHandler->getOutputAsString()));
     }
 
@@ -105,7 +105,7 @@ TEXT;
     {
         $instructionHandler = new \App\Classes\InstructionHandler();
 
-        $instructionHandler->processInput(self::$invalidQuery);
+        $instructionHandler->processInput(self::INVALID_QUERY);
     }
 
     /**
@@ -115,7 +115,7 @@ TEXT;
     {
         $instructionHandler = new \App\Classes\InstructionHandler();
 
-        $instructionHandler->processInput(self::$invalidUpdate);
+        $instructionHandler->processInput(self::INVALID_UPDATE);
     }
 
     /**
@@ -125,7 +125,7 @@ TEXT;
     {
         $instructionHandler = new \App\Classes\InstructionHandler();
 
-        $instructionHandler->processInput(self::$invalidQueryFormat);
+        $instructionHandler->processInput(self::INVALID_QUERY_FORMAT);
     }
 
     /**
@@ -135,7 +135,7 @@ TEXT;
     {
         $instructionHandler = new \App\Classes\InstructionHandler();
 
-        $instructionHandler->processInput(self::$invalidUpdateFormat);
+        $instructionHandler->processInput(self::INVALID_UPDATE_FORMAT);
     }
 
     /**
@@ -145,7 +145,7 @@ TEXT;
     {
         $instructionHandler = new \App\Classes\InstructionHandler();
 
-        $instructionHandler->processInput(self::$invalidNumberOfTestCases);
+        $instructionHandler->processInput(self::INVALID_NUMBER_OF_TEST_CASES);
     }
 
     /**
@@ -155,7 +155,7 @@ TEXT;
     {
         $instructionHandler = new \App\Classes\InstructionHandler();
 
-        $instructionHandler->processInput(self::$invalidNumberOfTestInstructions1);
+        $instructionHandler->processInput(self::INVALID_NUMBER_OF_TEST_INSTRUCTIONS_1);
     }
 
     /**
@@ -165,6 +165,6 @@ TEXT;
     {
         $instructionHandler = new \App\Classes\InstructionHandler();
 
-        $instructionHandler->processInput(self::$invalidNumberOfTestInstructions2);
+        $instructionHandler->processInput(self::INVALID_NUMBER_OF_TEST_INSTRUCTIONS_2);
     }
 }

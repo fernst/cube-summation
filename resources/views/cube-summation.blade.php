@@ -17,10 +17,8 @@
     {!! Form::close() !!}
 
     <h3>Output</h3>
-    <div class="form-group">
-        <p>
-            {{{ $output or 'Please paste instructions list and click on Process Instructions List' }}}
-        </p>
-    </div>
+    <p>
+        {{{ $output or 'Please paste instructions list and click on Process Instructions List' }}}
+    </p>
 
 @stop

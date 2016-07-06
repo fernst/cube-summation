@@ -6,6 +6,16 @@
     <title>Cube Summation</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 </head>
+<style>
+    .divider {
+        height: 5px;
+        width:100%;
+        display:block; /* for use on default inline elements like span */
+        margin: 18px 0;
+        overflow: hidden;
+        background-color: #e5e5e5;
+    }
+</style>
 <body>
 
 <nav class="navbar navbar-default">
@@ -14,7 +24,8 @@
             <a class="navbar-brand" href="#">Cube Summation</a>
         </div>
         <div class="nav navbar-nav navbar-right">
-            <li><a href="#">Home</a></li>
+            <li><a href="/">Text Input Implementation</a></li>
+            <li><a href="/db">Database Implementation</a></li>
         </div>
     </div>
 </nav>
